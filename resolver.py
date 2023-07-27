@@ -7,7 +7,6 @@ import select
 DNS_RECORDS = {
     "example.com": "192.168.0.1",
     "google.com": "8.8.8.8",
-    # Add more domain-to-IP mappings here
 }
 
 def handle_dns_request(data):
