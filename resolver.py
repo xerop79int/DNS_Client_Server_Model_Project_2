@@ -3,14 +3,20 @@ import sys
 import socket
 import select
 
-# Define DNS records (replace with your own domain and IP mappings)
-DNS_RECORDS = {
-    "example.com": "192.168.0.1",
-    "google.com": "8.8.8.8",
-}
+
+# the named.root file contains the DNS_RECORDS dictionary
+DNS_RECORDS = {}
+with open("named.root", "r") as f:
+    data_contents = f.read()
+
+exec(data_contents, DNS_RECORDS)
+
+DNS_RECORDS = DNS_RECORDS["DNS_RECORDS"]
 
 def handle_dns_request(data):
     domain = data.decode().strip()
+    # read the named.root file to get the DNS records
+    
 
     if domain in DNS_RECORDS:
         ip_address = DNS_RECORDS[domain]
