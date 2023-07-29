@@ -5,25 +5,41 @@ import select
 
 
 # the named.root file contains the DNS_RECORDS dictionary
-DNS_RECORDS = {}
-with open("named.root", "r") as f:
-    data_contents = f.read()
+domain_to_ipv4 = {}
+domain_to_ipv6 = {}
 
-exec(data_contents, DNS_RECORDS)
+# Read the data from the file
+file_path = "named.root"
+with open(file_path, 'r') as file:
+    lines = file.readlines()
 
-DNS_RECORDS = DNS_RECORDS["DNS_RECORDS"]
+# Process the lines to find the domain and its corresponding IPv4 address
+for line in lines:
+    # Split the line into columns based on tab ('\t') separator
+    columns = line.strip().split('\t')
+
+    # Check if the line contains A record (IPv4) for a domain
+    if columns[3] == "A":
+        domain = columns[0]  # The domain is in the first column
+        ipv4_address = columns[4]  # The IPv4 address is in the fifth column
+        # Add the domain and its corresponding IPv4 address to the dictionary
+        domain_to_ipv4[domain] = ipv4_address
+    if columns[3] == "AAAA":
+        domain = columns[0]
+        ipv6_address = columns[4]
+        domain_to_ipv6[domain] = ipv6_address
 
 def handle_dns_request(data):
     domain = data.decode().strip()
     # read the named.root file to get the DNS records
-    
-
-    if domain in DNS_RECORDS:
-        ip_address = DNS_RECORDS[domain]
+    # ipv4_address = domain_to_ipv4.get(domain
+    ipv4_address = domain_to_ipv4.get(domain, "Not found")
+    ipv6_address = domain_to_ipv6.get(domain, "Not found")
+    if ipv4_address == "Not found":
+        return ipv6_address.encode()
     else:
-        ip_address = "Not found"
-
-    return ip_address.encode()
+        ipv4_address = f'IPV4: {ipv4_address} IPV6: {ipv6_address}'	
+    return ipv4_address.encode()
 
 def run_dns_server(port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

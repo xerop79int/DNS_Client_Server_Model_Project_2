@@ -55,4 +55,4 @@ if __name__ == "__main__":
     elif ip_address == 'Check the server IP and port are correct and check if the server is running':
         print(ip_address)
     else:
-        print(f"{domain_name} resolves to: {ip_address[0]} with Response Size: {ip_address[1]}")
+        print(f"{domain_name} resolve to {ip_address[0]} with Response Size: {ip_address[1]}")
